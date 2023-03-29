@@ -1,0 +1,10 @@
+h1, p {
+  font-family: Lato;
+}
+.close{
+  float:right;
+  cursor: pointer;
+  font-weight: bold;
+  position: absolute;
+ right: 2px;
+}
