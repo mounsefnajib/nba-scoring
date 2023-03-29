@@ -23,7 +23,6 @@ export const fetchTeams = createAsyncThunk<Team[]>(
   'nbaScoring/fetchTeams',
   async () => {
     const response = await NBAScoringService.getListTeams();
-    console.log('fetch', response.data)
     return response.data
   }
 )
@@ -69,7 +68,6 @@ export const nbaScoringSlice = createSlice({
   },
 })
 
-// Action creators are generated for each case reducer function
 export const { deleteTeam } = nbaScoringSlice.actions
 
 export const selectTeams = (state: RootState) => state.nbaScoringReducer.teams
