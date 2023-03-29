@@ -1,45 +1,30 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ApiResponse } from '../models/ApiResponse';
-import { Team } from '../models/Team';
-import { TeamStat } from '../models/TeamStat';
-
-import NBAScoringService from '../services/NBAScoringService';
-import TeamStatService from '../services/TeamStatService';
-import { fetchTeams, fetchTeamStats, selectTeams, selectTeamsStats } from '../store/NbaScoringReducer';
+import { useSelector } from 'react-redux';
+import { fetchTeams, fetchTeamStats, selectStatus, selectTeams, selectTeamsStats } from '../store/NbaScoringReducer';
 import { useAppDispatch } from '../store/store';
 import TeamCard from './TeamCard';
 
 export default function Dashboard() {
-  // const [teams, setTeams] = React.useState<Team[]>([]);
   const [teamSelectedId, setTeamSelectedId] = React.useState(1);
-  // const [teamsStats, setTeamsStats]= React.useState<TeamStat[]>([])
 
   const teams = useSelector(selectTeams)
+  const status = useSelector(selectStatus)
   const teamsStats = useSelector(selectTeamsStats)
   const dispatch = useAppDispatch()
 
 
   React.useEffect(() => {
-    //NBAScoringService.getListTeams().then((response) => setTeams(response.data))
-    dispatch(fetchTeams())
+    if(status === 'idle')
+     dispatch(fetchTeams())
+     
   }, [])
 
   const handleAddTeam = () => {
     if(teamSelectedId === 0)
       return;
+    if(teamsStats.filter(teamStat => teamStat.team.id === teamSelectedId).length > 0)
+      return;
     dispatch(fetchTeamStats(teamSelectedId))
-    // NBAScoringService.getTeamLatestStats(teamSelectedId).then(
-    //   response => {
-    //     let teamStat = ({
-    //           team: teams.find(team => team.id == teamSelectedId),
-    //           ...TeamStatService.summarisingResult(response.data.map(
-    //             teamScoring => TeamStatService.calculStats(teamSelectedId, teamScoring)
-    //           ))
-    //     })  as TeamStat
-    //     setTeamsStats( teamsStats => ([...teamsStats, teamStat]))
-    //   }
-    // );
   }
   return (
     <>
@@ -64,7 +49,7 @@ export default function Dashboard() {
     <div  className="row">
         {teamsStats.map(
           teamStat => (
-            <div   className="col-6">
+            <div key={teamStat.team.id}  className="col-6">
                 <TeamCard teamStat={teamStat} />
             </div>
           )

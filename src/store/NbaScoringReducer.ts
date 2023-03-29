@@ -7,11 +7,13 @@ import TeamStatService from '../services/TeamStatService'
 import { RootState } from './store'
 
 export interface NBAScoringState {
+  status: 'idle'|'fulfilled',
   teamsStats: TeamStat[],
   teams: Team[]
 }
 
 const initialState: NBAScoringState = {
+  status: 'idle',
   teamsStats: [],
   teams: []
 }
@@ -21,6 +23,7 @@ export const fetchTeams = createAsyncThunk<Team[]>(
   'nbaScoring/fetchTeams',
   async () => {
     const response = await NBAScoringService.getListTeams();
+    console.log('fetch', response.data)
     return response.data
   }
 )
@@ -52,6 +55,7 @@ export const nbaScoringSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchTeams.fulfilled, (state, action) => {
       state.teams = action.payload
+      state.status = 'fulfilled'
     })
     builder.addCase(fetchTeamStats.fulfilled, (state, action) => {
       state.teamsStats = [
@@ -69,10 +73,11 @@ export const nbaScoringSlice = createSlice({
 export const { deleteTeam } = nbaScoringSlice.actions
 
 export const selectTeams = (state: RootState) => state.nbaScoringReducer.teams
+export const selectStatus = (state: RootState) => state.nbaScoringReducer.status
 export const selectTeamsStats = (state: RootState) => state.nbaScoringReducer.teamsStats
-export const selectTeamStatById = (state: RootState, teamId: number) => (
+export const selectTeamStatByteamAbbreviation = (state: RootState, abbreviation: string) => (
                                       state.nbaScoringReducer.teamsStats.find(
-                                        teamStat => teamStat.team.id === teamId
+                                        teamStat => teamStat.team.abbreviation === abbreviation
                                         )
                                     )
 

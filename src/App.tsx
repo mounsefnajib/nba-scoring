@@ -14,7 +14,7 @@ let router = createBrowserRouter([
     Component: Dashboard,
   },
   {
-    path: "/result",
+    path: "/results/:teamAbbreviation",
     Component: Result,
   }
 ]);
@@ -28,8 +28,8 @@ export default function App() {
   </header>
 
   <main>
-  <RouterProvider router={router}  />;
+  <RouterProvider router={router}  />
   </main>
 </div>
-  );
+  )
 }
